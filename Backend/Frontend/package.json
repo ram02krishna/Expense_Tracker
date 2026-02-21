@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
-    "axios": "^1.11.0",
+    "axios": "^1.13.5",
     "base64url": "^3.0.1",
     "chart.js": "^4.5.1",
     "emoji-picker-react": "^4.14.2",
