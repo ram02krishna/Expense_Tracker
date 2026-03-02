@@ -21,11 +21,10 @@ const connectDB = async () => {
   try {
     // console.log("Initiating new MongoDB connection...");
     const options = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      bufferCommands: false, // Disable Mongoose buffering
+      bufferCommands: false, // Disable Mongoose buffering for serverless
       serverSelectionTimeoutMS: 5000, // Fail fast if DB is down
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+      maxPoolSize: 10, // Maintain up to 10 socket connections
     };
 
     // Store the promise so subsequent calls wait for this one

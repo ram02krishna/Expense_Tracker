@@ -157,4 +157,7 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Only run the server startup in local development (not in Vercel serverless)
+if (require.main === module) {
+  startServer();
+}
