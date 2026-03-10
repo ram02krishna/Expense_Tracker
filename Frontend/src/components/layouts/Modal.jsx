@@ -1,24 +1,59 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 
 const Modal = ({ children, isOpen, onClose, title }) => {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  return (
-    <div className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-[calc(100%-1rem)] max-h-full overflow-y-auto overflow-x-hidden bg-black/20 bg-opacity-50">
-      <div className="relative p-6 w-full max-w-2xl max-h-full mx-4 md:mx-0">
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => setIsVisible(true), 10); // Small delay to trigger animation
+    } else {
+      setIsVisible(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen && !isVisible) return null;
+  if (!mounted) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      className={`fixed inset-0 z-[100] flex justify-center items-center overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${isVisible ? "bg-gray-900/60 backdrop-blur-sm opacity-100" : "bg-transparent backdrop-blur-none opacity-0"
+        }`}
+      onClick={(e) => {
+        // Close modal when clicking on the backdrop
+        if (e.target === e.currentTarget) {
+          setIsVisible(false);
+          setTimeout(onClose, 300); // Wait for animation before actually closing
+        }
+      }}
+    >
+      <div
+        className={`relative p-4 md:p-6 w-full max-w-2xl mx-auto transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isVisible ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"
+          }`}
+      >
         {/* Modal content */}
-        <div className="relative bg-white rounded-lg shadow-lg">
+        <div className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-700 overflow-hidden">
           {/* Modal header */}
-          <div className="flex items-center justify-between p-6 md:p-6 border-b rounded-t border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-800/50">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
 
             <button
               type="button"
-              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition-colors duration-200 cursor-pointer"
-              onClick={onClose}
+              className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full w-10 h-10 inline-flex flex-shrink-0 justify-center items-center transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500/30"
+              onClick={() => {
+                setIsVisible(false);
+                setTimeout(onClose, 300);
+              }}
+              aria-label="Close modal"
             >
               <svg
-                className="w-3 h-3"
+                className="w-4 h-4"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -36,10 +71,11 @@ const Modal = ({ children, isOpen, onClose, title }) => {
           </div>
 
           {/* Modal body */}
-          <div className="p-6 md:p-6 space-y-4">{children}</div>
+          <div className="p-8">{children}</div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
