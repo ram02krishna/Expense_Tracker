@@ -10,6 +10,13 @@ import { ThemeContext } from "../../context/ThemeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Custom positioner: tooltip follows the cursor so it never appears inside the donut hole
+if (!Tooltip.positioners.cursor) {
+  Tooltip.positioners.cursor = function (_items, eventPos) {
+    return { x: eventPos.x, y: eventPos.y };
+  };
+}
+
 const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
   const { theme } = useContext(ThemeContext);
 
@@ -47,6 +54,7 @@ const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
     responsive: true,
     maintainAspectRatio: false,
     cutout: "75%",
+    animation: { duration: 1000, easing: 'easeOutQuart' },
     plugins: {
       legend: {
         display: showLegend,
@@ -63,12 +71,14 @@ const ChartJsDoughnutChart = ({ data, colors, showLegend = true }) => {
         },
       },
       tooltip: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        titleColor: "#1f2937",
-        bodyColor: "#1f2937",
-        borderColor: "#e5e7eb",
+        position: "cursor",
+        backgroundColor: theme === "dark" ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
+        titleColor: theme === "dark" ? "#f1f5f9" : "#1f2937",
+        bodyColor: theme === "dark" ? "#cbd5e1" : "#1f2937",
+        borderColor: theme === "dark" ? "#334155" : "#e5e7eb",
         borderWidth: 1,
         padding: 10,
+        caretSize: 6,
         callbacks: {
           label: function (context) {
             let label = context.label || "";

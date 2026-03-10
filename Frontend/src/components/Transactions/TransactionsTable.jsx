@@ -9,10 +9,10 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-const TransactionsTable = ({ 
-    data, 
-    onEdit, 
-    onDelete, 
+const TransactionsTable = ({
+    data,
+    onEdit,
+    onDelete,
     showActions = true,
     type = "income" // "income" or "expense" to control amount color
 }) => {
@@ -25,7 +25,7 @@ const TransactionsTable = ({
     }
 
     return (
-        <div className="overflow-x-auto no-scrollbar">
+        <div className="overflow-x-auto no-scrollbar w-full max-w-full">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-700/50">
                     <tr>
@@ -53,9 +53,9 @@ const TransactionsTable = ({
                                     <div className="flex-shrink-0 h-10 w-10 text-2xl flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
                                         {item.icon ? (
                                             (item.icon.includes('/') || item.icon.includes('.')) ? (
-                                                <img 
-                                                    src={item.icon} 
-                                                    alt={item.title} 
+                                                <img
+                                                    src={item.icon}
+                                                    alt={item.title}
                                                     className="w-full h-full object-cover"
                                                     onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = '💰'; }}
                                                 />
@@ -83,26 +83,25 @@ const TransactionsTable = ({
                                 </div>
                             </td>
                             <td className="px-3 md:px-6 py-4 whitespace-nowrap">
-                                <div className={`text-sm font-semibold ${
-                                    (type === 'expense' || item.type === 'expense' || (!item.source && !item.type && !type)) 
-                                    ? 'text-red-600 dark:text-red-400' 
-                                    : 'text-green-600 dark:text-green-400'
-                                }`}>
+                                <div className={`text-sm font-semibold ${(type === 'expense' || item.type === 'expense' || (!item.source && !item.type && !type))
+                                        ? 'text-red-600 dark:text-red-400'
+                                        : 'text-green-600 dark:text-green-400'
+                                    }`}>
                                     {(type === 'expense' || item.type === 'expense' || (!item.source && !item.type && !type)) ? '-' : '+'} {formatCurrency(item.amount)}
                                 </div>
                             </td>
                             {showActions && (
                                 <td className="px-3 md:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex items-center justify-end space-x-3">
-                                        <button 
-                                            onClick={() => onEdit(item)} 
+                                        <button
+                                            onClick={() => onEdit(item)}
                                             className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors"
                                             title="Edit"
                                         >
                                             <LuPencil className="w-5 h-5" />
                                         </button>
-                                        <button 
-                                            onClick={() => onDelete(item._id)} 
+                                        <button
+                                            onClick={() => onDelete(item._id)}
                                             className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors"
                                             title="Delete"
                                         >

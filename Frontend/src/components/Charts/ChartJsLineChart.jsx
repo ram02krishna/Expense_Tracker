@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,6 +11,7 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { ThemeContext } from "../../context/ThemeContext";
 
 ChartJS.register(
   CategoryScale,
@@ -24,6 +25,9 @@ ChartJS.register(
 );
 
 const ChartJsLineChart = ({ data }) => {
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === "dark";
+
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-center text-gray-500 dark:text-gray-400">
@@ -38,7 +42,7 @@ const ChartJsLineChart = ({ data }) => {
       {
         label: "Amount",
         data: data.map((item) => item.amount),
-        borderColor: "#8b5cf6", // Primary purple
+        borderColor: "#8b5cf6",
         backgroundColor: (context) => {
           if (!context.chart.chartArea) {
             return "rgba(139, 92, 246, 0.2)";
@@ -51,7 +55,7 @@ const ChartJsLineChart = ({ data }) => {
         },
         tension: 0.4,
         fill: true,
-        pointBackgroundColor: "#fff",
+        pointBackgroundColor: isDark ? "#1e293b" : "#fff",
         pointBorderColor: "#8b5cf6",
         pointBorderWidth: 2,
         pointRadius: 4,
@@ -60,27 +64,27 @@ const ChartJsLineChart = ({ data }) => {
     ],
   };
 
+  const tickColor = isDark ? "#94a3b8" : "#6b7280";
+  const gridColor = isDark ? "rgba(148,163,184,0.12)" : "#f3f4f6";
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    animation: { duration: 1000, easing: 'easeOutQuart' },
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       tooltip: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        titleColor: "#1f2937",
-        bodyColor: "#1f2937",
-        borderColor: "#e5e7eb",
+        backgroundColor: isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.97)",
+        titleColor: isDark ? "#f1f5f9" : "#1f2937",
+        bodyColor: isDark ? "#cbd5e1" : "#374151",
+        borderColor: isDark ? "#334155" : "#e5e7eb",
         borderWidth: 1,
         padding: 10,
         displayColors: false,
         callbacks: {
           label: function (context) {
             let label = context.dataset.label || "";
-            if (label) {
-              label += ": ";
-            }
+            if (label) label += ": ";
             if (context.parsed.y !== null) {
               label += new Intl.NumberFormat("en-IN", {
                 style: "currency",
@@ -94,42 +98,24 @@ const ChartJsLineChart = ({ data }) => {
     },
     scales: {
       x: {
-        grid: {
-          display: false,
-          drawBorder: false,
-        },
+        grid: { display: false, drawBorder: false },
         ticks: {
-          color: "#6b7280",
-          font: {
-            family: "'Plus Jakarta Sans', sans-serif",
-            size: 11,
-          },
+          color: tickColor,
+          font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
         },
+        border: { display: false },
       },
       y: {
-        grid: {
-          color: "#f3f4f6",
-          borderDash: [5, 5],
-        },
+        grid: { color: gridColor, borderDash: [5, 5] },
         ticks: {
-          color: "#6b7280",
-          font: {
-            family: "'Plus Jakarta Sans', sans-serif",
-            size: 11,
-          },
-          callback: function (value) {
-            return "₹" + value;
-          },
+          color: tickColor,
+          font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
+          callback: (value) => "₹" + value,
         },
-        border: {
-          display: false,
-        },
+        border: { display: false },
       },
     },
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
+    interaction: { mode: "index", intersect: false },
   };
 
   return <Line data={chartData} options={options} />;

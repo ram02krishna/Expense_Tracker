@@ -47,12 +47,19 @@ exports.getAllIncome = asyncHandler(async (req, res, next) => {
 
   const query = { user: req.user.id };
 
-  // Date filtering
-  if (startDate && endDate) {
-    query.date = {
-      $gte: new Date(startDate),
-      $lte: new Date(endDate),
-    };
+  // Date filtering — supports startDate only, endDate only, or both
+  if (startDate || endDate) {
+    query.date = {};
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      query.date.$gte = start;
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      query.date.$lte = end;
+    }
   }
 
   // Search filtering
@@ -110,7 +117,7 @@ exports.deleteIncome = asyncHandler(async (req, res, next) => {
   // Validate income ID and user ID
   const incomeId = validateObjectId(req.params.id, 'Income ID');
   const userId = validateObjectId(req.user.id, 'User ID');
-  
+
   const income = await Income.findOneAndDelete({
     _id: incomeId,
     user: userId,
@@ -133,7 +140,7 @@ exports.deleteIncome = asyncHandler(async (req, res, next) => {
  */
 exports.updateIncome = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, source, category, date, note } = req.body;
-  
+
   // Sanitize amount
   const numericAmount = Number(amount);
   if (isNaN(numericAmount)) {

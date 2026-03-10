@@ -8,7 +8,7 @@ const router = express.Router();
 // Rate limiter for dashboard endpoints
 const dashboardLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit to 30 requests per windowMs per IP
+  max: 1000, // Relaxed for personal use — 30 was too low, hit instantly in dev
   message: "Too many requests to dashboard endpoints, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,

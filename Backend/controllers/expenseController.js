@@ -47,12 +47,19 @@ exports.getAllExpenses = asyncHandler(async (req, res, next) => {
 
   const query = { user: req.user.id };
 
-  // Date filtering
-  if (startDate && endDate) {
-    query.date = {
-      $gte: new Date(startDate),
-      $lte: new Date(endDate),
-    };
+  // Date filtering — supports startDate only, endDate only, or both
+  if (startDate || endDate) {
+    query.date = {};
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      query.date.$gte = start;
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      query.date.$lte = end;
+    }
   }
 
   // Search filtering
@@ -108,7 +115,7 @@ exports.deleteExpense = asyncHandler(async (req, res, next) => {
   // Validate expense ID and user ID
   const expenseId = validateObjectId(req.params.id, 'Expense ID');
   const userId = validateObjectId(req.user.id, 'User ID');
-  
+
   const expense = await Expense.findOneAndDelete({
     _id: expenseId,
     user: userId,
@@ -131,7 +138,7 @@ exports.deleteExpense = asyncHandler(async (req, res, next) => {
  */
 exports.updateExpense = asyncHandler(async (req, res, next) => {
   const { title, icon, amount, category, date, description } = req.body;
-  
+
   // Sanitize amount
   const numericAmount = Number(amount);
   if (isNaN(numericAmount)) {

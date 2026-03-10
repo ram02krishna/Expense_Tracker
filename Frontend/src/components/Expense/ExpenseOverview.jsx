@@ -21,23 +21,22 @@ const ExpenseOverview = ({ transactions, onAddExpense }) => {
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Track your spending trends and category distribution.</p>
         </div>
 
-        {/* FIXED BUTTON */}
         <button className="add-btn w-full md:w-auto flex-shrink-0" onClick={onAddExpense}>
           <LuPlus className="text-lg" />
           Add Expense
         </button>
       </div>
 
-       {/* Mobile Tabs */}
-      <div className="flex lg:hidden bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-6">
-        <button 
-          className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${chartView === 'trend' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+      {/* Mobile Tabs */}
+      <div className="flex w-full lg:hidden bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-6">
+        <button
+          className={`flex-1 py-1.5 px-2 text-sm font-medium rounded-md transition-all truncate ${chartView === 'trend' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
           onClick={() => setChartView('trend')}
         >
           Trend
         </button>
-        <button 
-          className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${chartView === 'category' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
+        <button
+          className={`flex-1 py-1.5 px-2 text-sm font-medium rounded-md transition-all truncate ${chartView === 'category' ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
           onClick={() => setChartView('category')}
         >
           Breakdown
@@ -57,22 +56,22 @@ const ExpenseOverview = ({ transactions, onAddExpense }) => {
           <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Category Breakdown</h6>
           <div className="flex flex-col h-full">
             <div className="h-[200px] lg:h-[250px] relative flex items-center justify-center shrink-0">
-               {categoryChartData.length > 0 ? (
+              {categoryChartData.length > 0 ? (
                 <ChartJsDoughnutChart data={categoryChartData} showLegend={false} />
-               ) : (
+              ) : (
                 <div className="text-gray-400 text-sm">No data available</div>
-               )}
+              )}
             </div>
-             {categoryChartData.length > 0 && (
+            {categoryChartData.length > 0 && (
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto max-h-[150px] custom-scrollbar pr-2">
-                 {categoryChartData.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ['#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6'][index % 5] }}></span>
-                      <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.name}>
-                        {item.name}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount || item.value)}
-                      </span>
-                    </div>
-                 ))}
+                {categoryChartData.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'][index % 5] }}></span>
+                    <span className="text-xs text-gray-600 dark:text-gray-300 truncate" title={item.name}>
+                      {item.name}: {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(item.amount || item.value)}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </div>

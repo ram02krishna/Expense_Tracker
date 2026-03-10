@@ -10,18 +10,6 @@ const Last30DaysExpenses = ({ data }) => {
     () => (data?.reduce((acc, curr) => acc + (curr.amount || 0), 0) || 0),
     [data],
   );
-  
-  const topCategory = useMemo(() => {
-    if (!chartData || chartData.length === 0) return null;
-    const sorted = [...chartData].sort((a, b) => (b.amount || 0) - (a.amount || 0));
-    return sorted[0];
-  }, [chartData]);
-
-  const getColorForCategory = (category) => {
-    if (!category) return COLORS[0];
-    const idx = chartData.findIndex((c) => c.name === category.name);
-    return COLORS[(idx === -1 ? 0 : idx) % COLORS.length];
-  };
 
   return (
     <div className="card h-auto min-h-[450px] transition-all duration-300 ease-in-out flex flex-col pb-6">
@@ -37,7 +25,6 @@ const Last30DaysExpenses = ({ data }) => {
         {chartData.length > 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
             <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Expense</span>
-
             <span className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
               ₹{addThousandsSeparator(totalExpense)}
             </span>
@@ -48,13 +35,13 @@ const Last30DaysExpenses = ({ data }) => {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3 px-4">
         {chartData.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
-             <span
+            <span
               className="shrink-0 w-3 h-3 rounded-full"
               style={{ backgroundColor: COLORS[index % COLORS.length] }}
-             />
-             <span className="text-xs text-gray-600 dark:text-gray-300 truncate">
-               {item.name}
-             </span>
+            />
+            <span className="text-xs text-gray-600 dark:text-gray-300 truncate">
+              {item.name}
+            </span>
           </div>
         ))}
       </div>

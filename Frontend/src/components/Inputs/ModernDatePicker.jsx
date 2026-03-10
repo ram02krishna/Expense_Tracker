@@ -6,16 +6,34 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple", className = "", inputClassName = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Initialize currentMonth from the selected value so the picker
+  // always opens on the correct month, not always today.
+  const getInitialMonth = () => {
+    if (value) {
+      const [y, m] = value.split("-");
+      return new Date(Number(y), Number(m) - 1, 1);
+    }
+    return new Date();
+  };
+  const [currentMonth, setCurrentMonth] = useState(getInitialMonth);
   const datePickerRef = useRef(null);
 
   // ⛔ FIX: Prevent all timezone shifting
   const selectedDate = value
     ? (() => {
-        const [y, m, d] = value.split("-");
-        return new Date(Number(y), Number(m) - 1, Number(d));
-      })()
+      const [y, m, d] = value.split("-");
+      return new Date(Number(y), Number(m) - 1, Number(d));
+    })()
     : null;
+
+  // Sync calendar view to the selected value whenever it changes
+  useEffect(() => {
+    if (value) {
+      const [y, m] = value.split("-");
+      setCurrentMonth(new Date(Number(y), Number(m) - 1, 1));
+    }
+  }, [value]);
 
   // Close popup on outside click
   useEffect(() => {
@@ -221,37 +239,27 @@ const ModernDatePicker = ({ value, onChange, error, label, colorTheme = "purple"
 
               {/* Calendar */}
               <div className="grid grid-cols-7 gap-1">
-                {days.map((date, index) => {
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-
-                  const isFuture = date && date > today;
-
-                  return (
-                    <button
-                      key={index}
-                      disabled={!date}
-                      onClick={() => handleSelect(date)}
-                      className={`
-                        aspect-square rounded-lg flex items-center justify-center
-                        text-sm transition-all duration-150
-                        ${
-                          !date
-                            ? "invisible"
-                            : isSelected(date)
-                            ? `${theme.bgAccent} text-white shadow-md`
-                            : isToday(date)
+                {days.map((date, index) => (
+                  <button
+                    key={index}
+                    disabled={!date}
+                    onClick={() => handleSelect(date)}
+                    className={`
+                      aspect-square rounded-lg flex items-center justify-center
+                      text-sm transition-all duration-150
+                      ${!date
+                        ? "invisible"
+                        : isSelected(date)
+                          ? `${theme.bgAccent} text-white shadow-md`
+                          : isToday(date)
                             ? `border ${theme.today} bg-white dark:bg-gray-800 font-semibold`
-                            : isFuture
-                            ? `text-gray-400 dark:text-gray-600 opacity-60 ${theme.hover}`
                             : `text-gray-700 dark:text-gray-300 ${theme.hover}`
-                        }
-                      `}
-                    >
-                      {date?.getDate()}
-                    </button>
-                  );
-                })}
+                      }
+                    `}
+                  >
+                    {date?.getDate()}
+                  </button>
+                ))}
               </div>
 
               {/* Bottom Actions */}

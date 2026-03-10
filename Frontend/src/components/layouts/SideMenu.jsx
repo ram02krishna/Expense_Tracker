@@ -13,11 +13,13 @@ const SideMenu = ({ activeMenu, onClose }) => {
       handleLogout();
       return;
     }
-    navigate(path);
-    // Close mobile menu if it's open
+
+    // Close mobile menu if it's open (must happen before potential early return or navigation)
     if (onClose) {
       onClose();
     }
+
+    navigate(path);
   };
 
   const handleLogout = () => {
@@ -28,7 +30,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
 
   return (
     <div className="w-64 h-full bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col shadow-sm transition-all duration-300 lg:fixed lg:top-[61px] lg:left-0 lg:h-[calc(100vh-61px)] lg:z-50">
-      
+
       {/* Profile section */}
       <div className="flex flex-col items-center justify-center gap-3 mt-8 mb-8">
         <div className="relative">
@@ -64,26 +66,24 @@ const SideMenu = ({ activeMenu, onClose }) => {
         {SIDE_MENU_DATA.map((item, index) => (
           <button
             key={`menu_${index}`}
-            className={`w-full flex items-center gap-3 text-sm py-3 px-4 rounded-xl transition-all duration-200 group ${
-              activeMenu === item.label
+            className={`w-full flex items-center gap-3 text-sm py-3 px-4 rounded-xl transition-all duration-200 group ${activeMenu === item.label
                 ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-semibold"
                 : "text-gray-600 dark:text-gray-300"
-            }`}
+              }`}
             onClick={() => handleClick(item.path)}
           >
             {item.icon && (
               <item.icon
-                className={`text-lg ${
-                  activeMenu === item.label
+                className={`text-lg ${activeMenu === item.label
                     ? "text-purple-600 dark:text-purple-400"
                     : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
-                }`}
+                  }`}
               />
             )}
             <span>{item.label}</span>
-            
-             {/* Active Indicator */}
-             {activeMenu === item.label && (
+
+            {/* Active Indicator */}
+            {activeMenu === item.label && (
               <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600 dark:bg-purple-400"></div>
             )}
           </button>
@@ -92,7 +92,7 @@ const SideMenu = ({ activeMenu, onClose }) => {
 
       {/* Footer/Logout Area could go here */}
       <div className="p-4 text-center">
-         <p className="text-xs text-gray-300 dark:text-gray-600">v2.1.1</p>
+        <p className="text-xs text-gray-300 dark:text-gray-600">v2.1.1</p>
       </div>
     </div>
   );

@@ -5,12 +5,19 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Pie } from "react-chartjs-2";
+import { Pie, Doughnut } from "react-chartjs-2";
 import { ThemeContext } from "../../context/ThemeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ChartJsPieChart = ({ data, colors, showLegend = true }) => {
+// Custom positioner: tooltip follows the cursor so it never appears inside the donut hole
+if (!Tooltip.positioners.cursor) {
+  Tooltip.positioners.cursor = function (_items, eventPos) {
+    return { x: eventPos.x, y: eventPos.y };
+  };
+}
+
+const ChartJsPieChart = ({ data, colors, showLegend = true, donut = false, labelKey = "category" }) => {
   const { theme } = useContext(ThemeContext);
 
   if (!data || data.length === 0) {
@@ -31,14 +38,14 @@ const ChartJsPieChart = ({ data, colors, showLegend = true }) => {
   ];
 
   const chartData = {
-    labels: data.map((item) => item.name || item.category || item.source),
+    labels: data.map((item) => item[labelKey] || item.name || item.category || item.source),
     datasets: [
       {
         data: data.map((item) => item.amount || item.value),
         backgroundColor: colors || defaultColors,
-        borderColor: "#ffffff",
+        borderColor: theme === "dark" ? "#1f2937" : "#ffffff",
         borderWidth: 2,
-        hoverOffset: 4,
+        hoverOffset: 6,
       },
     ],
   };
@@ -46,6 +53,8 @@ const ChartJsPieChart = ({ data, colors, showLegend = true }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    cutout: donut ? "65%" : "0%",
+    animation: { duration: 1000, easing: 'easeOutQuart' },
     plugins: {
       legend: {
         display: showLegend,
@@ -62,12 +71,14 @@ const ChartJsPieChart = ({ data, colors, showLegend = true }) => {
         },
       },
       tooltip: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        titleColor: "#1f2937",
-        bodyColor: "#1f2937",
-        borderColor: "#e5e7eb",
+        position: "cursor",
+        backgroundColor: theme === "dark" ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
+        titleColor: theme === "dark" ? "#f1f5f9" : "#1f2937",
+        bodyColor: theme === "dark" ? "#cbd5e1" : "#1f2937",
+        borderColor: theme === "dark" ? "#334155" : "#e5e7eb",
         borderWidth: 1,
         padding: 10,
+        caretSize: 6,
         callbacks: {
           label: function (context) {
             let label = context.label || "";
@@ -87,7 +98,8 @@ const ChartJsPieChart = ({ data, colors, showLegend = true }) => {
     },
   };
 
-  return <Pie data={chartData} options={options} />;
+  const ChartComponent = donut ? Doughnut : Pie;
+  return <ChartComponent data={chartData} options={options} />;
 };
 
 export default ChartJsPieChart;

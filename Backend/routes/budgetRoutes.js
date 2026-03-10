@@ -32,6 +32,8 @@ router.route('/')
     .post(Protect, validateBudget, handleValidationErrors, createBudget)
     .get(Protect, getBudgets);
 
+// IMPORTANT: This specific route MUST be declared before /:id to avoid
+// Express treating "report" as a Mongo ID parameter.
 router.get('/report/actual-vs-budget', Protect, getBudgetVsActual);
 
 router.route('/:id')

@@ -33,13 +33,13 @@ const RecentIncomeWithChart = ({ data, totalIncome }) => {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3 px-4">
         {chartData.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
-             <span
+            <span
               className="shrink-0 w-3 h-3 rounded-full"
               style={{ backgroundColor: COLORS[index % COLORS.length] }}
-             />
-             <span className="text-xs text-gray-600 dark:text-gray-300 truncate">
-               {item.name}
-             </span>
+            />
+            <span className="text-xs text-gray-600 dark:text-gray-300 truncate">
+              {item.name}
+            </span>
           </div>
         ))}
       </div>

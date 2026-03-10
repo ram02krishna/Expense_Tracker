@@ -39,19 +39,100 @@
   --shadow-glow: 0 0 15px rgba(124, 58, 237, 0.3);
 
   --animate-blob: blob 7s infinite;
+  --animate-fade-up: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fadeIn 0.3s ease both;
+  --animate-scale-in: scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-slide-in-right: slideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
 
   @keyframes blob {
     0% {
       transform: translate(0px, 0px) scale(1);
     }
+
     33% {
       transform: translate(30px, -50px) scale(1.1);
     }
+
     66% {
       transform: translate(-20px, 20px) scale(0.9);
     }
+
     100% {
       transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -400px 0;
+    }
+
+    100% {
+      background-position: 400px 0;
+    }
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.8;
+    }
+
+    70% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+
+    100% {
+      transform: scale(1.3);
+      opacity: 0;
     }
   }
 }
@@ -63,14 +144,18 @@
   /* Light Theme Colors */
   --background-color: #f8fafc;
   --text-color: #1e293b;
-  --primary-color: #7c3aed; /* Adjusted for consistency */
+  --primary-color: #7c3aed;
+
+  /* Animation timing shared */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dark Theme Colors */
 .dark {
-  --background-color: #1a202c; /* Tailwind gray-900 */
-  --text-color: #e2e8f0; /* Tailwind gray-200 */
-  --primary-color: #8b5cf6; /* Tailwind primary-500, slightly lighter for contrast */
+  --background-color: #0f172a;
+  --text-color: #e2e8f0;
+  --primary-color: #8b5cf6;
 }
 
 @layer base {
@@ -78,112 +163,240 @@
     font-family: var(--font-display);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   body {
     background-color: var(--background-color);
     overflow-x: hidden;
     color: var(--text-color);
-    /* transition: background-color 0.3s ease, color 0.3s ease; Removed for instant switch */
+    transition: background-color 0.3s var(--ease-smooth), color 0.3s var(--ease-smooth);
+  }
+
+  /* Smooth focus outlines */
+  :focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+    border-radius: 6px;
   }
 }
 
 @layer components {
-  /* Existing components using hardcoded colors will need to be updated to use theme variables or Tailwind's dark mode utility classes. */
+
+  /* ── Inputs ─────────────────────────────────────────────── */
   .input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3 mb-4 mt-2 border border-gray-200 outline-none
-      transition-all duration-200
-      dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600;
-    /* removed: dark:focus:ring-primary-600 dark:focus:border-primary-500 */
+    @apply w-full flex justify-between gap-3 text-sm text-gray-900 bg-white rounded-xl px-4 py-3 mb-4 mt-2 border border-gray-200 outline-none dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600;
+    transition: border-color 0.2s var(--ease-smooth),
+      box-shadow 0.2s var(--ease-smooth),
+      background-color 0.3s var(--ease-smooth);
   }
 
-  /* Focus styles handled via plain CSS to avoid @apply + variant issues */
   .input-box:focus {
     outline: none;
-    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12); /* primary-600-ish glow */
-    border-color: #7c3aed; /* primary-600 */
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+    border-color: #7c3aed;
   }
 
   .dark .input-box:focus {
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18); /* primary-500-ish glow */
-    border-color: #8b5cf6; /* primary-500 */
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18);
+    border-color: #8b5cf6;
   }
 
+  /* ── Buttons ─────────────────────────────────────────────── */
   .btn-primary {
-    @apply w-full text-sm font-semibold text-white bg-purple-600 shadow-lg shadow-purple-200 px-6 py-3.5 rounded-xl my-1
-      transition-all duration-300
-      dark:bg-primary-600 dark:shadow-primary-300;
+    @apply w-full text-sm font-semibold text-white bg-purple-600 px-6 py-3.5 rounded-xl my-1;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    transition: transform 0.15s var(--ease-spring),
+      box-shadow 0.2s var(--ease-smooth),
+      background-color 0.2s var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
   }
 
-  /* Custom animations */
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
+    background-color: #6d28d9;
+  }
 
+  .btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+  }
 
+  /* ── Cards ───────────────────────────────────────────────── */
+  .card {
+    @apply bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.25s var(--ease-smooth),
+      transform 0.25s var(--ease-spring),
+      border-color 0.25s var(--ease-smooth),
+      background-color 0.3s var(--ease-smooth);
+  }
 
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 8px 32px rgba(0, 0, 0, 0.07);
+  }
 
+  .dark .card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.25);
+    border-color: rgba(139, 92, 246, 0.15);
+  }
 
-
-  /* Hover effects */
-  .hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Clickable / interactive card gets lift on hover */
+  .card-interactive {
     cursor: pointer;
   }
 
+  .card-interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
 
+  .dark .card-interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+
+  /* ── Card buttons ────────────────────────────────────────── */
+  .card-btn {
+    @apply flex items-center gap-2 text-xs font-semibold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer;
+    transition: transform 0.15s var(--ease-spring),
+      background-color 0.2s var(--ease-smooth),
+      border-color 0.2s var(--ease-smooth),
+      color 0.2s var(--ease-smooth);
+  }
+
+  .card-btn:hover {
+    @apply bg-gray-100 dark:bg-gray-600 border-gray-300 dark:border-gray-500;
+    transform: translateY(-1px);
+  }
+
+  .card-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Add button ──────────────────────────────────────────── */
+  .add-btn {
+    @apply flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400 whitespace-nowrap bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-800 rounded-lg px-5 py-2.5 cursor-pointer;
+    transition: transform 0.15s var(--ease-spring),
+      background-color 0.2s var(--ease-smooth),
+      box-shadow 0.2s var(--ease-smooth);
+  }
+
+  .add-btn:hover {
+    @apply bg-purple-100 dark:bg-purple-900/50;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+  }
+
+  .add-btn:active {
+    transform: scale(0.97);
+  }
+
+  .add-btn-fill {
+    @apply text-white bg-purple-600 border-transparent shadow-md shadow-purple-200;
+  }
+
+  /* ── Hover lift utility ──────────────────────────────────── */
+  .hover-lift {
+    transition: transform 0.25s var(--ease-spring),
+      box-shadow 0.25s var(--ease-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-3px);
+  }
+
+  /* ── Page enter animation ────────────────────────────────── */
+  .page-enter {
+    animation: fadeUp 0.45s var(--ease-spring) both;
+  }
+
+  /* Stagger children — apply to wrapper, children get delay via nth-child */
+  .stagger-children>* {
+    animation: fadeUp 0.45s var(--ease-spring) both;
+  }
+
+  .stagger-children>*:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .stagger-children>*:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .stagger-children>*:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .stagger-children>*:nth-child(4) {
+    animation-delay: 180ms;
+  }
+
+  .stagger-children>*:nth-child(5) {
+    animation-delay: 240ms;
+  }
+
+  .stagger-children>*:nth-child(6) {
+    animation-delay: 300ms;
+  }
+
+  /* ── Skeleton / shimmer loading ──────────────────────────── */
+  .skeleton {
+    border-radius: 8px;
+    background: linear-gradient(90deg,
+        rgba(203, 213, 225, 0.4) 25%,
+        rgba(203, 213, 225, 0.7) 50%,
+        rgba(203, 213, 225, 0.4) 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  .dark .skeleton {
+    background: linear-gradient(90deg,
+        rgba(51, 65, 85, 0.6) 25%,
+        rgba(71, 85, 105, 0.8) 50%,
+        rgba(51, 65, 85, 0.6) 75%);
+    background-size: 800px 100%;
+  }
 }
 
-
-
-
-
-
-
-.card {
-  @apply bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card-btn {
-  @apply flex items-center gap-2 text-xs font-semibold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors duration-200 cursor-pointer;
-}
-
-.add-btn {
-  @apply flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400 whitespace-nowrap bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-800 rounded-lg px-5 py-2.5 cursor-pointer transition-colors duration-200;
-}
-
-.add-btn-fill {
-  @apply text-white bg-purple-600 border-transparent shadow-md shadow-purple-200;
-}
-
-/* Custom Scrollbar Styles */
+/* ── Custom Scrollbars ───────────────────────────────────── */
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  /* Custom styled scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: theme('colors.gray.300');
     border-radius: 20px;
+    transition: background-color 0.2s;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.gray.400');
   }
 
   .dark .custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: theme('colors.gray.600');
   }
 
-  /* Firefox support for custom scrollbar */
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: theme('colors.gray.300') transparent;
@@ -191,5 +404,47 @@
 
   .dark .custom-scrollbar {
     scrollbar-color: theme('colors.gray.600') transparent;
+  }
+
+  /* Animation utilities */
+  .animate-fade-up {
+    animation: fadeUp 0.45s var(--ease-spring) both;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease both;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s var(--ease-spring) both;
+  }
+
+  .animate-slide-right {
+    animation: slideInRight 0.35s var(--ease-spring) both;
+  }
+
+  /* Delay utilities */
+  .delay-75 {
+    animation-delay: 75ms;
+  }
+
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+
+  .delay-225 {
+    animation-delay: 225ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .delay-375 {
+    animation-delay: 375ms;
+  }
+
+  .delay-450 {
+    animation-delay: 450ms;
   }
 }

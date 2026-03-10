@@ -19,7 +19,7 @@ const router = express.Router();
 // Rate limiter for income endpoints
 const incomeLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit to 30 requests per windowMs per IP
+  max: 1000, // Relaxed for personal use — 30 was too low, hit instantly with pagination + search
   message: "Too many requests to income endpoints, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
