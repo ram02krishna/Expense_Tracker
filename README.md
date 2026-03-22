@@ -300,7 +300,7 @@ Create a `.env` file in the `Backend/` directory:
 
 ```env
 # Database Configuration
-MONGO_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/expense_tracker
+MONGO_URI=
 
 # JWT Configuration
 JWT_SECRET=your_super_secret_jwt_key_min_32_characters_recommended
