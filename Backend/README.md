@@ -629,36 +629,6 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. **Fork** the repository
-2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
-3. **Make your changes** and test thoroughly
-4. **Commit** with clear messages (`git commit -m 'Add AmazingFeature'`)
-5. **Push** to the branch (`git push origin feature/AmazingFeature`)
-6. **Open a Pull Request** with a description of changes
-
-### Code Style
-
-- Follow ESLint rules configured in `.eslintrc.js`
-- Use Prettier for code formatting
-- Write meaningful commit messages
-- Add comments for complex logic
-
----
-
-## 🆘 Support
-
-For support, please:
-
-1. Check the [Issues](https://github.com/ByteOps02/Expense_Tracker/issues) page
-2. Open a new issue with detailed information
-3. Include error messages and steps to reproduce
-
----
-
 ## 👨‍💻 Author
 
 **Ram Krishna** - Initial project development
