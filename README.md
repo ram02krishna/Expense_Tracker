@@ -269,17 +269,6 @@ Expense_Tracker/
 // Indexes: {user: 1, startDate: 1, endDate: 1}
 ```
 
----
-
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/en/) (v18 or higher)
-- [npm](https://www.npmjs.com/) (v9 or higher)
-- [MongoDB](https://www.mongodb.com/try/download/community) (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
-- [Cloudinary Account](https://cloudinary.com/users/register/free) (for image storage)
-
 ### Installation Steps
 
 #### 1. Clone the Repository
@@ -395,30 +384,6 @@ openssl rand -base64 32
 
 ---
 
-## Security Features
-
-### Authentication & Authorization
-- **JWT Tokens:** 1-hour expiration for security
-- **Password Hashing:** Bcryptjs with salt rounds (10)
-- **WebAuthn Support:** Optional biometric authentication
-
-### API Security
-- **Rate Limiting:**
-  - General endpoints: 100 requests per 15 minutes
-  - Auth endpoints: 50 requests per 15 minutes
-  - Upload endpoints: 20 requests per 15 minutes
-- **CORS:** Whitelist configuration with Vercel domain support
-- **Helmet:** Security headers (XSS, clickjacking, etc.)
-- **HTTPS:** Required in production
-
-### Data Protection
-- **Input Validation:** Express-validator with sanitization
-- **MongoDB Injection Prevention:** Parameter sanitization
-- **Error Handling:** Generic error messages in production
-- **Secure Cookies:** HTTP-only, SameSite flags
-
----
-
 ## 📡 API Endpoints
 
 ### Authentication (`/api/v1/auth`)
@@ -472,7 +437,7 @@ openssl rand -base64 32
 
 ---
 
-## 🧪 Testing Endpoints
+## Testing Endpoints
 
 Using cURL:
 
@@ -493,60 +458,6 @@ curl -X GET http://localhost:5000/api/v1/auth/getUser \
 ```
 
 **Tools for API Testing:**
-- [Postman](https://www.postman.com/) - Full-featured API testing GUI
-- [Thunder Client](https://www.thunderclient.com/) - VS Code extension
-- [REST Client Extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) - VS Code extension
-- `curl` - Command-line tool
+- [Postman](https://www.postman.com/)
 
 ---
-
-## 🚀 Deployment on Vercel
-
-This project is configured for serverless deployment on Vercel with separate frontend and backend services.
-
-### Architecture
-
-```
-Vercel Deployment:
-├── Frontend (Static Site)
-│   └── Deployed from /Frontend directory
-├── Backend (Serverless Functions)
-│   └── Deployed from /Backend/api/index.js
-└── MongoDB Atlas (Cloud Database)
-```
-
-### Prerequisites
-
-1. [Vercel Account](https://vercel.com/signup)
-2. GitHub repository connected to Vercel
-3. MongoDB Atlas cluster
-4. Cloudinary account
-
-### Environment Variables Setup
-
-1. Go to Vercel Project Dashboard → **Settings** → **Environment Variables**
-2. Add the following variables:
-
-```
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-CLIENT_URL=https://your-domain.vercel.app
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-NODE_ENV=production
-VITE_BASE_URL=https://your-domain.vercel.app/api/v1
-```
-
-### Deployment Steps
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy from project root
-vercel
-
-# Or push to GitHub and auto-deploy
-git push origin main
-```
